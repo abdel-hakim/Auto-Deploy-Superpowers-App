@@ -52,7 +52,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
@@ -68,7 +68,7 @@ jobs:
           keys: [frontend-build]
   build-backend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -84,7 +84,7 @@ jobs:
           key: backend-build
   test-frontend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -93,7 +93,9 @@ jobs:
           name: Install dependencies
           command: |
             cd frontend
-            npm install
+            npm i 
+            npm install jest 
+            npm run test
       - run:
           name: RUN Test
           command: |
@@ -101,24 +103,23 @@ jobs:
             npm run test
   test-backend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [backend-build]
       - run:
-          name: Install dependencies
+          name: test backend
           command: |
+            ls -ltr
             cd backend
-            npm install
-      - run:
-          name: running unit test
-          command: |
-            cd backend
-            npm run test
+            npm install jest-junit
+            npm run test -- --reporters=default --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: /tmp/reports/junit/
+      - store_test_results:
+          path: /tmp/reports/junit/
   scan-frontend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -135,7 +136,7 @@ jobs:
             npm audit fix --audit-level=critical --force
   scan-backend:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
