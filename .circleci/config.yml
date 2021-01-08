@@ -121,6 +121,8 @@ jobs:
           name: auditing the packages
           command: |
             cd frontend
+            npm update
+            npm audit
             npm audit fix --audit-level=critical --force
   scan-backend:
     docker:
