@@ -104,11 +104,16 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
+          name: Install dependencies
+          command: |
+            cd backend
+            npm install
+      - run:
           name: running unit test
           command: |
             cd backend
-            npm i
-            npm audit fix
+# npm i
+# npm audit fix
             npm run test
   scan-frontend:
     docker:
@@ -221,7 +226,7 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      - image: circleci/node:13.8.0
+      - image: circleci/node:latest
     steps:
       - checkout
       - run: cd backend && npm install
