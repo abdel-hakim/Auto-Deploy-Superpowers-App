@@ -112,8 +112,6 @@ jobs:
           name: running unit test
           command: |
             cd backend
-# npm i
-# npm audit fix
             npm run test
   scan-frontend:
     docker:
