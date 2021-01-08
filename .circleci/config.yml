@@ -155,6 +155,7 @@ jobs:
               --tags project=udapeople \
               --stack-name "prod-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+      - run:  aws cloudformation describe-stack-events --stack-name "prod-backend-${CIRCLE_WORKFLOW_ID:0:7}"
               
       - run:
           name: Ensure front-end infrastructure exist
@@ -179,6 +180,7 @@ jobs:
             - inventory
       - run: pwd
       - run: cat ~/project/.circleci/ansible/inventory
+      - destroy-environment
       # Here's where you will add some code to rollback on failure      
 
   configure-infrastructure:
@@ -210,6 +212,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/configure-server.yml
+      - destroy-environment
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
@@ -236,8 +239,8 @@ jobs:
             else
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "false" https://api.memstash.io/values/<< pipeline.id >>_migrations
             fi
-     # Here's where you will add some code to rollback on failure      
-
+      - destroy-environment
+     # Here's where you will add some code to rollback on failure
   deploy-frontend:
     docker:
       - image: amazon/aws-cli
@@ -281,7 +284,8 @@ jobs:
           name: Deploy frontend objects
           command: |
             aws s3 cp frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
-      # Here's where you will add some code to rollback on failure                  
+      - destroy-environment
+      # Here's where you will add some code to rollback on failure                   
   deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
@@ -289,7 +293,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "be:7c:52:8a:37:2c:d0:f5:3a:38:ca:ce:16:59:02:d4"
+            - "a2:ee:4d:38:4c:88:3d:c3:5e:b9:1d:bc:f3:57:6e:b3"
       - attach_workspace:
           at: .circleci/ansible/
       - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
@@ -313,6 +317,7 @@ jobs:
             printenv >> ./backend/.env
             cat ./backend/.env
             ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/deploy-backend.yml
+      - destroy-environment
 
       # Here's where you will add some code to rollback on failure  
 
@@ -370,6 +375,8 @@ jobs:
             --tags project=udapeople \
             --stack-name udapeople-cloudfront \
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
+      - destroy-environment
+      - revert-migrations
       # Here's where you will add some code to rollback on failure  
   cleanup:
     docker:
@@ -394,6 +401,8 @@ jobs:
               aws cloudformation delete-stack --stack-name "prod-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "prod-frontend-${OldWorkflowID}"
             fi
+      - destroy-environment
+      - revert-migrations
             
 workflows:
   default:
