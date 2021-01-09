@@ -38,9 +38,7 @@ commands:
           # Add when this will run
           when: on_fail
           command: |
-
             statuscheck=$(curl -H "token: ${CIRCLE_WORKFLOW_ID:0:7}" --request GET https://api.memstash.io/values/<< pipeline.id >>_migrations)
-
             if(( $statuscheck=="true")); 
             then
             echo "Reverting the changes"
@@ -166,7 +164,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople \
               --stack-name "prod-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"              
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -191,7 +189,7 @@ jobs:
       - run: pwd
       - run: cat ~/project/.circleci/ansible/inventory
       - destroy-environment
-      # Here's where you will add some code to rollback on failure      
+      # Here's where you will add some code to rollback on failure
 
   configure-infrastructure:
     docker:
@@ -223,7 +221,7 @@ jobs:
           command: |
             ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/configure-server.yml
       - destroy-environment
-      # Here's where you will add some code to rollback on failure      
+      # Here's where you will add some code to rollback on failure
 
   run-migrations:
     docker:
@@ -250,7 +248,7 @@ jobs:
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "false" https://api.memstash.io/values/<< pipeline.id >>_migrations
             fi
       - destroy-environment
-     # Here's where you will add some code to rollback on failure
+      # Here's where you will add some code to rollback on failure
   deploy-frontend:
     docker:
       - image: amazon/aws-cli
@@ -295,7 +293,7 @@ jobs:
           command: |
             aws s3 cp frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
       - destroy-environment
-      # Here's where you will add some code to rollback on failure                   
+      # Here's where you will add some code to rollback on failure
   deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
@@ -329,7 +327,7 @@ jobs:
             ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/deploy-backend.yml
       - destroy-environment
 
-      # Here's where you will add some code to rollback on failure  
+      # Here's where you will add some code to rollback on failure
 
   smoke-test:
     docker:
@@ -361,7 +359,7 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
-      # Here's where you will add some code to rollback on failure  
+      # Here's where you will add some code to rollback on failure
 
   cloudfront-update:
     docker:
@@ -387,7 +385,7 @@ jobs:
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment
       - revert-migrations
-      # Here's where you will add some code to rollback on failure  
+      # Here's where you will add some code to rollback on failure
   cleanup:
     docker:
       - image: amazon/aws-cli
@@ -413,7 +411,7 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
-            
+
 workflows:
   default:
     jobs:
