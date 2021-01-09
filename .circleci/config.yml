@@ -172,21 +172,21 @@ jobs:
               --tags project=udapeople \
               --stack-name "prod-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - run: echo \[web\] > ./.circleci/ansible/inventory
+      - run: echo \[web\] > .circleci/ansible/inventory
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --output text >> ./.circleci/ansible/inventory
-            cat ./.circleci/ansible/inventory
+            --output text >> .circleci/ansible/inventory
+            cat .circleci/ansible/inventory
       - persist_to_workspace:
           root: .circleci/ansible/
           paths:
             - inventory
       - run: pwd
-      - run: cat ~/project/.circleci/ansible/inventory
+      - run: cat .circleci/ansible/inventory
       - destroy-environment
       - revert-migrations
       # Here's where you will add some code to rollback on failure
@@ -312,11 +312,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip ansible nodejs npm curl jq
-      - run:
-          name: installing shell
-          command: |
-            apk add openssh-client
+            apk add --update tar gzip ansible nodejs npm
+            pip install awscli
       - run:
           name: deploy backend
           no_output_timeout: 30m
@@ -333,15 +330,17 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
-      - amazonservices
-      - run: cat .circleci/ansible/inventory
-      - run:
-          name: Deploy backend
-          command: |
-            cat .circleci/ansible/inventory
-            printenv >> ./backend/.env
-            cat ./backend/.env
             ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/deploy-backend.yml
+
+      - amazonservices
+      # - run: cat .circleci/ansible/inventory
+      # - run:
+      #     name: Deploy backend
+      #     command: |
+      #       cat .circleci/ansible/inventory
+      #       printenv >> ./backend/.env
+      #       cat ./backend/.env
+      #       ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/deploy-backend.yml
 
       # Here's where you will add some code to rollback on failure
 
