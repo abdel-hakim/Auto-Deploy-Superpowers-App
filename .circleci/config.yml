@@ -198,7 +198,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "a2:ee:4d:38:4c:88:3d:c3:5e:b9:1d:bc:f3:57:6e:b3"
+            - "cc:3d:5e:6a:33:b4:b0:71:b6:de:bb:83:b5:02:a0:48"
       - attach_workspace:
           at: .circleci/ansible/
       - run:
@@ -303,7 +303,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "a2:ee:4d:38:4c:88:3d:c3:5e:b9:1d:bc:f3:57:6e:b3"
+            - "cc:3d:5e:6a:33:b4:b0:71:b6:de:bb:83:b5:02:a0:48"
       - attach_workspace:
           at: .circleci/ansible/
       - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
@@ -319,6 +319,7 @@ jobs:
             apk add openssh-client
       - run:
           name: deploy backend
+          no_output_timeout: 30m
           command: |
             echo ENVIROMENT=development > "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
@@ -330,6 +331,8 @@ jobs:
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+            tar -C backend -czvf artifact.tar.gz .
+            cd .circleci/ansible
       - amazonservices
       - run: cat .circleci/ansible/inventory
       - run:
