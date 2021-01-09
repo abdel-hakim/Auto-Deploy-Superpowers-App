@@ -46,7 +46,6 @@ commands:
             else
             echo "no migration occured"           
             fi
-
 jobs:
   build-frontend:
     docker:
@@ -280,8 +279,6 @@ jobs:
           root: .circleci/ansible/
           paths:
             - backendip
-      - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
-          path: .circleci/ansible/backendip
       - run:
           name: copy the s3 url
           command: |
@@ -304,9 +301,6 @@ jobs:
             - "a2:ee:4d:38:4c:88:3d:c3:5e:b9:1d:bc:f3:57:6e:b3"
       - attach_workspace:
           at: .circleci/ansible/
-      - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
-          path: .circleci/ansible/inventory
-          destination: artifact-file
       - run:
           name: Install dependencies
           command: |
