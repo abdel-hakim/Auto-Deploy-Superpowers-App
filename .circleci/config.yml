@@ -375,8 +375,7 @@ jobs:
             else
               return 1
             fi
-      - destroy-environment
-      - revert-migrations
+
       # Here's where you will add some code to rollback on failure
 
   cloudfront-update:
@@ -401,8 +400,7 @@ jobs:
             --tags project=udapeople \
             --stack-name udapeople-cloudfront \
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - destroy-environment
-      - revert-migrations
+
       # Here's where you will add some code to rollback on failure
   cleanup:
     docker:
@@ -427,8 +425,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "prod-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "prod-frontend-${OldWorkflowID}"
             fi
-      - destroy-environment
-      - revert-migrations
+
 
 workflows:
   default:
