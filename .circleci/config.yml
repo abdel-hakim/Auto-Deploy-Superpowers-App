@@ -331,7 +331,9 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
-            ansible-playbook -i inventory deploy-backend.yml
+            pwd
+            ls -la
+            ansible-playbook -i ~/project/inventory deploy-backend.yml
 
       - amazonservices
       # - run: cat .circleci/ansible/inventory
