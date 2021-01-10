@@ -334,11 +334,11 @@ jobs:
             pwd
             ls -la
             ansible-playbook -i ~/project/inventory deploy-backend.yml
-
       - amazonservices
       - run: cat .circleci/ansible/inventory
       - run:
           name: Deploy backend
+          no_output_timeout: 60m
           command: |
             cat .circleci/ansible/inventory
             printenv >> ./backend/.env
