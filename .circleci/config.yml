@@ -188,7 +188,7 @@ jobs:
       - run: pwd
       - run: cat .circleci/ansible/inventory
       - destroy-environment
-      - revert-migrations
+
       # Here's where you will add some code to rollback on failure
 
   configure-infrastructure:
@@ -220,8 +220,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/configure-server.yml
-      - destroy-environment
-      - revert-migrations
+
       # Here's where you will add some code to rollback on failure
 
   run-migrations:
@@ -295,6 +294,7 @@ jobs:
           command: |
             aws s3 cp frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
       - destroy-environment
+      - revert-migrations
       # Here's where you will add some code to rollback on failure
   deploy-backend:
     docker:
@@ -344,9 +344,10 @@ jobs:
             printenv >> ./backend/.env
             cat ./backend/.env
             ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/deploy-backend.yml
+      - destroy-environment
+      - revert-migrations
 
       # Here's where you will add some code to rollback on failure
-
   smoke-test:
     docker:
       - image: python:3.7-alpine3.11
@@ -375,7 +376,8 @@ jobs:
             else
               return 1
             fi
-
+      - destroy-environment
+      - revert-migrations
       # Here's where you will add some code to rollback on failure
 
   cloudfront-update:
@@ -400,6 +402,8 @@ jobs:
             --tags project=udapeople \
             --stack-name udapeople-cloudfront \
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
+      - destroy-environment
+      - revert-migrations
 
       # Here's where you will add some code to rollback on failure
   cleanup:
@@ -425,8 +429,8 @@ jobs:
               aws cloudformation delete-stack --stack-name "prod-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "prod-frontend-${OldWorkflowID}"
             fi
-
-
+      - destroy-environment
+      - revert-migrations
 
 workflows:
   default:
@@ -454,9 +458,9 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
