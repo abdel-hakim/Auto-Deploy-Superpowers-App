@@ -336,14 +336,14 @@ jobs:
             ansible-playbook -i ~/project/inventory deploy-backend.yml
 
       - amazonservices
-      # - run: cat .circleci/ansible/inventory
-      # - run:
-      #     name: Deploy backend
-      #     command: |
-      #       cat .circleci/ansible/inventory
-      #       printenv >> ./backend/.env
-      #       cat ./backend/.env
-      #       ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/deploy-backend.yml
+      - run: cat .circleci/ansible/inventory
+      - run:
+          name: Deploy backend
+          command: |
+            cat .circleci/ansible/inventory
+            printenv >> ./backend/.env
+            cat ./backend/.env
+            ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/deploy-backend.yml
 
       # Here's where you will add some code to rollback on failure
 
@@ -427,6 +427,7 @@ jobs:
             fi
 
 
+
 workflows:
   default:
     jobs:
@@ -453,9 +454,9 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
+      # - cleanup:
+      #     requires: [cloudfront-update]
