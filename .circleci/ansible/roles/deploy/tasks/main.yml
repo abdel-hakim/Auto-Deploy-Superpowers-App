@@ -11,7 +11,10 @@
   shell: |
     cd /home/ubuntu/backend    
     ls -la
+    printenv
     npm install
+    npm run prestart:prod
+
 
 - name: "build package"
   shell: |

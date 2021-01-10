@@ -311,12 +311,13 @@ jobs:
           destination: artifact-file
       - run:
           name: Install dependencies
+          no_output_timeout: 30m
           command: |
             apk add --update tar gzip ansible nodejs npm
             pip install awscli
       - run:
           name: deploy backend
-          no_output_timeout: 30m
+          no_output_timeout: 60m
           command: |
             echo ENVIROMENT=development > "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
