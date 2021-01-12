@@ -127,6 +127,12 @@ jobs:
             JEST_JUNIT_OUTPUT_DIR: /tmp/reports/junit/
       - store_test_results:
           path: /tmp/reports/junit/
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -144,6 +150,12 @@ jobs:
           command: |
             cd frontend
             npm audit fix --audit-level=critical --force
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -207,7 +219,12 @@ jobs:
       - run: pwd
       - run: cat .circleci/ansible/inventory
       - destroy-environment
-
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
       # Here's where you will add some code to rollback on failure
 
   configure-infrastructure:
@@ -315,6 +332,12 @@ jobs:
       - destroy-environment
       - revert-migrations
       # Here's where you will add some code to rollback on failure
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
   deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
