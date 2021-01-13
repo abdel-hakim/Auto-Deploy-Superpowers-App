@@ -102,8 +102,7 @@ jobs:
           command: |
             ls -ltr
             cd backend
-            npm install jest-junit
-            npm run test -- --reporters=default --reporters=jest-junit
+            npm audit fix
             npm audit fix --audit-level=critical --force
           environment:
             JEST_JUNIT_OUTPUT_DIR: /tmp/reports/junit/
