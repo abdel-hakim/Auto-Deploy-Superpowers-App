@@ -222,7 +222,10 @@ jobs:
       - image: circleci/node:latest
     steps:
       - checkout
-      - run: cd backend && npm install
+      - run:
+          command:  |
+            cd backend 
+            npm audit fix --force
       - run:
           name: Run migrations
           no_output_timeout: 10m
