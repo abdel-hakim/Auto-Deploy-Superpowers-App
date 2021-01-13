@@ -64,12 +64,6 @@ jobs:
           key: frontend-build
       - restore_cache:
           keys: [frontend-build]
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
   build-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -105,12 +99,6 @@ jobs:
           command: |
             cd frontend
             npm run test
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -127,12 +115,6 @@ jobs:
             JEST_JUNIT_OUTPUT_DIR: /tmp/reports/junit/
       - store_test_results:
           path: /tmp/reports/junit/
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -150,12 +132,6 @@ jobs:
           command: |
             cd frontend
             npm audit fix --audit-level=critical --force
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -169,12 +145,6 @@ jobs:
             cd ./backend
             npm i
             npm audit fix --audit-level=critical --force
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -285,12 +255,6 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
       # Here's where you will add some code to rollback on failure
   deploy-frontend:
     docker:
@@ -338,12 +302,6 @@ jobs:
       - destroy-environment
       - revert-migrations
       # Here's where you will add some code to rollback on failure
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
   deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
@@ -394,12 +352,6 @@ jobs:
             ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/deploy-backend.yml
       - destroy-environment
       - revert-migrations
-      - slack/notify:
-          event: always
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
 
       # Here's where you will add some code to rollback on failure
   smoke-test:
@@ -433,12 +385,7 @@ jobs:
       - destroy-environment
       - revert-migrations
       # Here's where you will add some code to rollback on failure
-      - slack/notify:
-          event: always
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
+
   cloudfront-update:
     docker:
       - image: amazon/aws-cli
@@ -463,12 +410,6 @@ jobs:
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment
       - revert-migrations
-      - slack/notify:
-          event: always
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
 
       # Here's where you will add some code to rollback on failure
   cleanup:
@@ -496,12 +437,6 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
-      - slack/notify:
-          event: always
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
 
 workflows:
   default:
