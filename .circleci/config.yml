@@ -76,6 +76,7 @@ jobs:
             cd backend
             npm install
             npm build
+            npm audit fix
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -223,17 +224,22 @@ jobs:
     steps:
       - checkout
       - run:
-          command:  |
-            cd backend 
-            npm audit fix --force
+          name: awscli install
+          command: |
+            sudo apt-get -y -qq update
+            sudo apt-get -qq install awscli
+            sudo apt-get -y -qq install python3
       - run:
           name: Run migrations
           no_output_timeout: 10m
           command: |
+            cd backend
+            npm install
+            npm run build
+            # npm audit fix --audit-level=critical --force
             touch dbmigrationresults
-            cd backend 
-            npm run migrations > dbmigrationresults
-      - run: cat dbmigrationresults
+            npm run migrations >> dbmigrationresults
+            cat dbmigrationresults
       - run:
           name: Send migration results to memstash
           command: |
