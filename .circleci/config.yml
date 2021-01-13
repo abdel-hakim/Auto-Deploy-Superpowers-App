@@ -394,6 +394,12 @@ jobs:
             ansible-playbook -i .circleci/ansible/inventory .circleci/ansible/deploy-backend.yml
       - destroy-environment
       - revert-migrations
+      - slack/notify:
+          event: always
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
       # Here's where you will add some code to rollback on failure
   smoke-test:
@@ -427,7 +433,12 @@ jobs:
       - destroy-environment
       - revert-migrations
       # Here's where you will add some code to rollback on failure
-
+      - slack/notify:
+          event: always
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
   cloudfront-update:
     docker:
       - image: amazon/aws-cli
@@ -452,6 +463,12 @@ jobs:
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment
       - revert-migrations
+      - slack/notify:
+          event: always
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
       # Here's where you will add some code to rollback on failure
   cleanup:
@@ -479,6 +496,12 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
+      - slack/notify:
+          event: always
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
 workflows:
   default:
