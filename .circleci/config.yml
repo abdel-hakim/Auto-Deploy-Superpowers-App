@@ -52,6 +52,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - run: npm audit fix
       - run:
           name: Build frontend
           command: |
@@ -70,6 +71,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
+      - run: npm audit fix
       - run:
           name: Build Backend
           command: |
