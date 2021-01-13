@@ -133,9 +133,6 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          command:  |
-            npm audit
-      - run:
           name: Scan backend
           command: |
             cd ./backend
