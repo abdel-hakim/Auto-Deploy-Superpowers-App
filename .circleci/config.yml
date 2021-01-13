@@ -137,7 +137,6 @@ jobs:
           command: |
             cd ./backend
             npm i
-            npm audit
             npm audit fix --audit-level=critical --force
   deploy-infrastructure:
     docker:
