@@ -236,7 +236,6 @@ jobs:
           no_output_timeout: 10m
           command: |
             cd backend
-            cd backend
             npm install
             npm run build
             touch dbmigrationresults
