@@ -236,9 +236,9 @@ jobs:
           no_output_timeout: 10m
           command: |
             cd backend
+            cd backend
             npm install
             npm run build
-            npm audit fix --audit-level=critical --force
             touch dbmigrationresults
             npm run migrations >> dbmigrationresults
             cat dbmigrationresults
