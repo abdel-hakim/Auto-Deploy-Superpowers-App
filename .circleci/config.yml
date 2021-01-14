@@ -92,6 +92,7 @@ jobs:
           name: Install dependencies
           command: |
             cd frontend
+            npm audit fix
             npm install
             npm run test
   test-backend:
@@ -221,7 +222,7 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      - image: circleci/node:latest
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
@@ -237,7 +238,7 @@ jobs:
             cd backend
             npm install
             npm run build
-            # npm audit fix --audit-level=critical --force
+            npm audit fix --audit-level=critical --force
             touch dbmigrationresults
             npm run migrations >> dbmigrationresults
             cat dbmigrationresults
